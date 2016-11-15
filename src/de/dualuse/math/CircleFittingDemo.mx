@@ -1,0 +1,3 @@
+datapoint: [x, y];
+parameters: [cx, cy, r];
+e: (sqrt((x-cx)^2+(y-cy)^2)-r)^2;
