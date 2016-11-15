@@ -1,4 +1,5 @@
 package de.dualuse.math;
+
 //import static java.lang.Math.*;
 
 public abstract class NonLinearRegressionSolverTemplate extends NonLinearOptimization {
@@ -7,7 +8,7 @@ public abstract class NonLinearRegressionSolverTemplate extends NonLinearOptimiz
 	public NonLinearRegressionSolverTemplate() { super(DIM); }
 	
 	public abstract int n();
-	//public abstract double DATAPOINTELEMENTINPUT(int i);
+	//public abstract double DATAELEMENT-INPUT(int i);
 	
 	
 	private double e = 0, e_[] = {}, e__[][] = {};
@@ -40,12 +41,12 @@ public abstract class NonLinearRegressionSolverTemplate extends NonLinearOptimiz
 			
 			for (int j=0;j<DIM;j++)
 				values[j]+=e_[j];
-
+			
 		}
 		
 		return values;
 	}
-
+	
 	@Override
 	protected double[][] e__(double[] params, double[][] values) {
 		//final double PARAMETER = params[INDEX];

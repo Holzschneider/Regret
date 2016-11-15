@@ -10,6 +10,7 @@ public class NonLinearRegressionSolverGenerator {
 	public static void main(String[] args) throws Exception {
 		String source = "src/de/dualuse/math/CircleFittingDemo.mx";
 		String template = "src/de/dualuse/math/NonLinearRegressionSolverTemplate.java";
+
 		
 		String replacements[][] = { 
 //				{"pow\\((.+),\\s*1/2\\s*\\)", "sqrt($1)" },
@@ -109,7 +110,7 @@ public class NonLinearRegressionSolverGenerator {
 		
 		final Pattern classNamePattern = Pattern.compile("^(.*)("+templateName+")(.*)$");
 		
-		final Pattern dataPointElementNamePattern = Pattern.compile("^(\\s*)//(.*)DATAPOINTELEMENTINPUT(.*)$");
+		final Pattern dataPointElementNamePattern = Pattern.compile("^(\\s*)//(.*)DATAELEMENT-INPUT(.*)$");
 		final Pattern parameterCountPattern = Pattern.compile("^(.*DIM\\s*=\\s*)\\d+(\\s*;.*)$");
 		final Pattern parameterDefinitionPattern = Pattern.compile("^(\\s*)//(.*)PARAMETER(.*\\[\\s*)INDEX(\\s*\\]\\s*;.*)$");
 		final Pattern dataElementDefinitionPattern = Pattern.compile("^(\\s*)//(.*)DATAELEMENT(.*)DATAELEMENT(\\s*\\(\\s*i\\s*\\)\\s*;.*)$");
@@ -161,7 +162,8 @@ public class NonLinearRegressionSolverGenerator {
 				for (Matcher m=errorFunctionPattern.matcher(line);m.find();) {
 					String code = derivatives.get(0)
 							.replace("%", "v")
-							.replace("result","e");
+							.replace("result","e")
+							.replaceAll(" , (v|e)", ",\n"+m.group(1)+"\t$1");
 					
 					for (String[] replacement: replacements)
 						code = code.replaceAll(replacement[0], replacement[1]);
@@ -174,7 +176,8 @@ public class NonLinearRegressionSolverGenerator {
 					String code = derivatives.get(1)
 							.replace("%", "v")
 							.replace("result = [", "e_[] = {")
-							.replace("] ;", "};");
+							.replace("] ;", "};")
+							.replaceAll(" , (v|e)", ",\n"+m.group(1)+"\t$1");
 					
 					for (String[] replacement: replacements)
 						code = code.replaceAll(replacement[0], replacement[1]);
@@ -188,7 +191,13 @@ public class NonLinearRegressionSolverGenerator {
 							.replace("%", "v")
 							.replace("result = [[", "e__[][] = {{")
 							.replace("],[","},{")
-							.replace("]] ;", "}};");
+							.replace("]] ;", "}};")
+							.replaceAll(" , (v|e)", ",\n"+m.group(1)+"\t$1")
+//							.replaceAll("\\{\\{", "\n"+m.group(1)+"\t\t{{")
+							.replaceAll("\\{\\{", "\t{{")
+							.replaceAll(",\\{", ",\n"+m.group(1)+"\t\t\t {");
+//							.replaceAll("(\\{|,)\\{", "$1\n"+m.group(1)+"\t\t{")
+//							.replaceAll("\\}\\}", "}\n"+m.group(1)+"\t}");
 					
 					for (String[] replacement: replacements)
 						code = code.replaceAll(replacement[0], replacement[1]);
