@@ -1,0 +1,6 @@
+datapoints: [px, py, pz, qx, qy, qz];
+parameters: [x, y, z];
+p: [px,py,pz]; 
+q: [qx,qy,qz];
+c: ((x-p)~(x-q));
+e: expand(express(sqrt(c.c)/sqrt((p-q).(p-q))));

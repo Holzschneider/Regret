@@ -8,7 +8,8 @@ import java.util.regex.Pattern;
 public class NonLinearRegressionSolverGenerator {
 	
 	public static void main(String[] args) throws Exception {
-		String source = "src/de/dualuse/math/CircleFittingDemo.mx";
+//		String source = "src/de/dualuse/math/CircleFittingDemo.mx";
+		String source = "src/de/dualuse/math/RayBundling.mx";
 		String template = "src/de/dualuse/math/NonLinearRegressionSolverTemplate.java";
 
 		
