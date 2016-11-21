@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 public class NonLinearRegressionSolverGenerator {
+	
 	
 	public static void main(String[] args) throws Exception {
 //		String source = "src/de/dualuse/math/CircleFittingDemo.mx";
@@ -42,24 +42,26 @@ public class NonLinearRegressionSolverGenerator {
 
 		Process mp = new ProcessBuilder("/Applications/Maxima.app/Contents/Resources/maxima.sh").start();
 		
-		try (BufferedReader br = new BufferedReader(new FileReader(new File(source))); PrintWriter out = new PrintWriter(mp.getOutputStream())) {
+		try (BufferedReader br = new BufferedReader(new FileReader(new File(source))); PrintWriter out = new PrintWriter((mp.getOutputStream()))) {
 			
+			out.println("load(\"vect\");");
 			//Configuration
 			out.println("display2d:false;");
-			for (String s: expr2c)
+			for (String s: expr2c) 
 				out.println(s);
 			
 			//Filling
 			for (String line ="";line!=null;line = br.readLine()) {
-				for (Matcher m = datapointPattern.matcher(line), n;m.find(); out.println(m.group(0)))
+				out.println(line);
+				for (Matcher m = datapointPattern.matcher(line), n;m.find();)
 					for (n = listElementsPattern.matcher(m.group(1)), datapointElements.clear();n.find();)
 						datapointElements.add(n.group(1));
 
-				for (Matcher m = parametersPattern.matcher(line), n;m.find(); out.println(m.group(0)))
+				for (Matcher m = parametersPattern.matcher(line), n;m.find();)
 					for (n = listElementsPattern.matcher(m.group(1)), parameterNames.clear();n.find();)
 						parameterNames.add(n.group(1));
 
-				for (Matcher m = datapointErrorExpressionPattern.matcher(line);m.find(); out.println(m.group(0))) {
+				for (Matcher m = datapointErrorExpressionPattern.matcher(line);m.find();) {
 					errorExpression = m.group(0);
 					errorExpressionName = m.group(1);
 				}
@@ -70,7 +72,7 @@ public class NonLinearRegressionSolverGenerator {
 			for (String p: parameterNames) {
 				String derivativeName = "d_d"+p;
 				firstOrderDerivativeNames.add(derivativeName);
-				out.println(derivativeName+": diff("+errorExpressionName+","+p+",1);");
+				out.println(derivativeName+": express(diff("+errorExpressionName+","+p+",1));");
 			}
 			
 //			System.out.println();
@@ -79,7 +81,7 @@ public class NonLinearRegressionSolverGenerator {
 				ArrayList<String> secondOrderDerivativeNames = new ArrayList<String>();
 				for (String p: parameterNames) {
 					String secondOrderDerivativeName = "d"+q+"d"+p;
-					out.println(secondOrderDerivativeName+": diff("+q+","+p+",1);");
+					out.println(secondOrderDerivativeName+": express(diff("+q+","+p+",1));");
 					secondOrderDerivativeNames.add(secondOrderDerivativeName);
 				}
 				secondOrderDerivativeNamesList.add(secondOrderDerivativeNames);
